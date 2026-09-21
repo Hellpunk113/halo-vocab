@@ -1,0 +1,72 @@
+{
+  "name": "halo-vocab",
+  "version": "0.1.0",
+  "description": "Halo Vocab - local vocabulary learning app",
+  "author": "Halo Vocab",
+  "main": "main.cjs",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win nsis",
+    "dist:mac": "electron-builder --mac dmg",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^38.1.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.halovocab.app",
+    "productName": "Halo Vocab",
+    "artifactName": "Halo-Vocab-${version}-${os}-${arch}.${ext}",
+    "asar": true,
+    "files": [
+      "index.html",
+      "main.cjs",
+      "app.js",
+      "styles.css",
+      "word-bank.js",
+      "word-selector.html",
+      "assets/**/*",
+      "README.md"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "icon": "assets/halo-logo.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "artifactName": "Halo-Vocab-${version}-Setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "perMachine": false,
+      "runAfterFinish": true,
+      "shortcutName": "Halo Vocab"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "category": "public.app-category.education"
+    },
+    "dmg": {
+      "title": "Halo Vocab",
+      "contents": [
+        { "x": 180, "y": 220 },
+        { "x": 480, "y": 220, "type": "link", "path": "/Applications" }
+      ]
+    }
+  }
+}

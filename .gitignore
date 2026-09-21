@@ -1,0 +1,8 @@
+node_modules/
+release/
+dist/
+.pnpm-store/
+__pycache__/
+.env
+.env.*
+*.log

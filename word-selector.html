@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Halo Vocab · 词表选择器</title>
+  <style>
+    :root { --red:#551e24; --red-soft:#f6e9ea; --ink:#2b2728; --muted:#7f7375; --line:#e8dfe0; --paper:#faf8f8; --white:#fff; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Arial,"Microsoft YaHei",sans-serif; }
+    .shell { max-width:1180px; margin:0 auto; padding:30px 24px 60px; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:27px; }
+    .brand { display:flex; align-items:center; gap:13px; }
+    .brand img { width:54px; height:54px; border-radius:50%; object-fit:cover; }
+    .brand strong { display:block; font-size:18px; }.brand small { color:var(--muted); display:block; margin-top:4px; }
+    .eyebrow { color:#a16c72; font-size:10px; font-weight:800; letter-spacing:1.7px; margin:0 0 8px; }
+    h1 { margin:0; font-size:30px; letter-spacing:-.6px; }.intro { color:var(--muted); font-size:13px; margin:9px 0 0; }
+    .panel { background:var(--white); border:1px solid var(--line); border-radius:18px; padding:20px; box-shadow:0 8px 30px rgba(75,34,39,.04); }
+    .toolbar { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:20px; }.toolbar-info { margin-right:auto; color:var(--muted); font-size:12px; }.toolbar-info strong { color:var(--red); font-size:15px; }
+    button { border:0; cursor:pointer; font:inherit; }.button { padding:10px 14px; border-radius:9px; font-weight:700; font-size:12px; }.button.secondary { color:var(--red); background:var(--red-soft); }.button.primary { color:#fff; background:var(--red); }.button:hover { filter:brightness(.97); }
+    .groups { display:grid; gap:25px; }.group-section h2 { display:flex; align-items:center; gap:10px; font-size:17px; margin:0 0 12px; }.group-section h2 span { color:var(--muted); font-size:11px; font-weight:400; }
+    .word-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }.word-card { display:grid; grid-template-columns:22px 1fr; gap:10px; padding:14px; border:1px solid var(--line); border-radius:12px; background:#fff; transition:.15s; }.word-card:hover { border-color:#cdaeb2; }.word-card.is-selected { background:#fffafa; border-color:#dbbdc0; }.word-card input { width:17px; height:17px; accent-color:var(--red); margin-top:2px; }.word-card strong { font-size:15px; }.word-card .meta { color:#a36f75; font-size:10px; margin-left:6px; }.word-card .zh { color:#584d4f; font-size:12px; line-height:1.45; margin-top:7px; }.word-card .ipa { color:#a09597; font-size:10px; margin-top:5px; }.word-card .example { color:var(--muted); border-top:1px solid #f0e8e8; font-size:10px; line-height:1.5; margin-top:9px; padding-top:8px; }
+    .empty { color:var(--muted); text-align:center; padding:35px; }.hint { color:#9d8e90; font-size:11px; margin-top:18px; }
+    #pdf-export-sheet { display:none; }
+    .pdf-title { text-align:center; border-bottom:2px solid var(--red); padding-bottom:12px; margin-bottom:18px; }.pdf-title h1 { font-size:24px; }.pdf-title p { color:#777; font-size:11px; margin:6px 0 0; }.pdf-group { margin-bottom:17px; break-inside:avoid; }.pdf-group h2 { color:var(--red); font-size:15px; border-bottom:1px solid #d9c4c6; padding-bottom:5px; margin:0 0 7px; }.pdf-table { width:100%; border-collapse:collapse; font-size:10px; }.pdf-table th,.pdf-table td { border:1px solid #ddd; padding:5px 7px; text-align:left; vertical-align:top; }.pdf-table th { background:#f5e8e9; color:#5e3036; }.pdf-table td:first-child { width:18%; font-weight:700; }.pdf-table td:nth-child(2) { width:27%; }.pdf-footer { border-top:1px solid #ddd; color:#777; font-size:9px; margin-top:20px; padding-top:7px; }
+    @media (max-width:850px) { .word-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:580px) { .shell { padding:20px 14px 40px; }.topbar { align-items:flex-start; flex-direction:column; }.word-grid { grid-template-columns:1fr; }.toolbar-info { flex-basis:100%; } }
+    body { background:radial-gradient(circle at 86% 4%,rgba(191,127,136,.18),transparent 23rem),radial-gradient(circle at 8% 88%,rgba(224,193,175,.18),transparent 20rem),linear-gradient(135deg,#fcfafb,#f3edef); overflow-x:hidden; }
+    body::before,body::after { content:""; position:fixed; z-index:-1; pointer-events:none; border-radius:50%; filter:blur(3px); animation:drift 16s ease-in-out infinite alternate; }
+    body::before { width:250px; height:250px; right:8%; top:8%; background:radial-gradient(circle,rgba(255,255,255,.7),rgba(165,88,101,.13) 64%,transparent 72%); }
+    body::after { width:190px; height:190px; bottom:8%; left:12%; background:radial-gradient(circle,rgba(220,186,165,.2),transparent 70%); animation-delay:-6s; }
+    .panel { border-radius:28px; background:rgba(255,255,255,.7); border-color:rgba(255,255,255,.95); box-shadow:0 24px 65px rgba(65,27,34,.1),inset 0 1px 0 rgba(255,255,255,.95); backdrop-filter:blur(22px) saturate(135%); -webkit-backdrop-filter:blur(22px) saturate(135%); animation:rise .7s cubic-bezier(.2,.85,.25,1.2) both; }
+    .brand img { border:2px solid rgba(255,255,255,.85); box-shadow:0 10px 24px rgba(65,27,34,.14); transition:transform .4s cubic-bezier(.2,.85,.25,1.2); }.brand img:hover { transform:rotate(-6deg) scale(1.08); }
+    .word-card { border-radius:17px; background:rgba(255,255,255,.66); box-shadow:inset 0 1px 0 rgba(255,255,255,.9); transition:transform .35s cubic-bezier(.2,.85,.25,1.2),box-shadow .3s ease,border-color .3s ease; animation:rise .55s cubic-bezier(.2,.85,.25,1.2) both; }.word-card:hover { transform:translateY(-4px); box-shadow:0 16px 28px rgba(65,27,34,.1),inset 0 1px 0 rgba(255,255,255,.95); }.word-card.is-selected { background:rgba(255,247,248,.86); }
+    .button { border-radius:999px; box-shadow:0 7px 16px rgba(75,30,38,.08),inset 0 1px 0 rgba(255,255,255,.48); transition:transform .35s cubic-bezier(.2,.85,.25,1.2),box-shadow .3s ease; }.button:hover { transform:translateY(-2px); box-shadow:0 11px 23px rgba(75,30,38,.14),inset 0 1px 0 rgba(255,255,255,.6); }.button:active { transform:scale(.94); }
+    .group-section h2 { letter-spacing:-.5px; }.pdf-title { border-radius:18px 18px 0 0; padding:16px; background:linear-gradient(135deg,#fff8f8,#f3e3e5); }
+    @keyframes drift { from { transform:translate(-9px,5px) scale(.96); } to { transform:translate(17px,-12px) scale(1.08); } } @keyframes rise { from { opacity:0; transform:translateY(14px) scale(.985); } to { opacity:1; transform:none; } }
+    @media print {
+      @page { size:A4; margin:13mm; }
+      body { background:#fff; }
+      body.print-mode .shell { display:none; }
+      body.print-mode #pdf-export-sheet { display:block; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><img src="assets/halo-logo.png" alt="HALO" /><div><strong>Halo Vocab</strong><small>500 词选择器</small></div></div>
+      <div><p class="eyebrow">WORD LIST BUILDER</p><h1>选择要导出的词</h1><p class="intro">默认全部选中；导出时只会生成已选中的单词。</p></div>
+    </header>
+    <section class="panel">
+      <div class="toolbar">
+        <div class="toolbar-info">已选 <strong id="selected-count">0</strong> 个 · 未选 <strong id="unselected-count">0</strong> 个</div>
+        <button class="button secondary" id="select-all">全部选中</button>
+        <button class="button secondary" id="select-none">全部不选</button>
+        <button class="button secondary" id="invert-selection">反选</button>
+        <button class="button primary" id="export-pdf">导出已选词表 PDF</button>
+      </div>
+      <div class="groups" id="groups"></div>
+      <p class="hint">提示：点击复选框改变状态。点击“导出已选词表 PDF”后，在打印窗口选择“另存为 PDF”。</p>
+    </section>
+  </main>
+  <section id="pdf-export-sheet" aria-label="已选词表 PDF 内容"></section>
+
+  <script src="word-bank.js"></script>
+  <script>
+    const STORAGE_KEY = 'halo-vocab-selector-v1';
+    const words = (window.HALO_PDF_WORDS || []).filter(word => Number(word.group) <= 3);
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    const savedIds = saved && saved.version === 2 && Array.isArray(saved.ids) ? saved.ids : null;
+    const selected = new Set(savedIds || words.map(word => word.id));
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+
+    function saveSelection() { localStorage.setItem(STORAGE_KEY, JSON.stringify({version:2, ids:[...selected]})); }
+    function render() {
+      const container = document.querySelector('#groups');
+      if (!words.length) { container.innerHTML = '<div class="empty">没有读取到 500 词词表，请确认 word-bank.js 与本页面在同一文件夹。</div>'; return; }
+      const groups = Array.from({length:25}, (_, index) => index + 1).map(group => {
+        const items = words.filter(word => Number(word.group) === group);
+        return `<section class="group-section"><h2>第 ${String(group).padStart(2,'0')} 组 <span>${items.length} 个词</span></h2><div class="word-grid">${items.map(word => `<label class="word-card ${selected.has(word.id) ? 'is-selected' : ''}" data-id="${escapeHtml(word.id)}"><input type="checkbox" ${selected.has(word.id) ? 'checked' : ''} /><div><strong>${escapeHtml(word.word)}</strong><span class="meta">${escapeHtml(word.pos || '')}</span><div class="zh">${escapeHtml(word.zh || '暂无中文释义')}</div><div class="ipa">英 /${escapeHtml(word.ipaUk || '—')}/　美 /${escapeHtml(word.ipaUs || '—')}/</div>${word.example ? `<div class="example">${escapeHtml(word.example)}</div>` : ''}</div></label>`).join('')}</div></section>`;
+      }).join('');
+      container.innerHTML = groups;
+      container.querySelectorAll('.word-card').forEach(card => card.querySelector('input').addEventListener('change', event => { const id = card.dataset.id; event.target.checked ? selected.add(id) : selected.delete(id); card.classList.toggle('is-selected', event.target.checked); saveSelection(); updateCounts(); }));
+      updateCounts();
+    }
+    function updateCounts() { document.querySelector('#selected-count').textContent = selected.size; document.querySelector('#unselected-count').textContent = words.length - selected.size; }
+    function setAll(value) { words.forEach(word => value ? selected.add(word.id) : selected.delete(word.id)); saveSelection(); render(); }
+    function buildPdfSheet(selectedWords) {
+      const sections = Array.from({length:25}, (_, index) => index + 1).map(group => { const items = selectedWords.filter(word => Number(word.group) === group); if (!items.length) return ''; return `<section class="pdf-group"><h2>第 ${String(group).padStart(2,'0')} 组</h2><table class="pdf-table"><thead><tr><th>单词</th><th>中文释义</th><th>英文词典解释 / 例句</th></tr></thead><tbody>${items.map(word => `<tr><td>${escapeHtml(word.word)}<br /><small>英 /${escapeHtml(word.ipaUk || '—')}/</small></td><td>${escapeHtml(word.zh || '—')}</td><td>${escapeHtml(word.en || word.example || '—')}${word.example && word.en ? `<br /><br />例句：${escapeHtml(word.example)}` : ''}</td></tr>`).join('')}</tbody></table></section>`; }).join('');
+      document.querySelector('#pdf-export-sheet').innerHTML = `<div class="pdf-title"><h1>Halo Vocab 已选词表</h1><p>25 组 · 共 ${selectedWords.length} 个词</p></div>${sections || '<p>没有已选中的词。</p>'}<div class="pdf-footer">由 Halo Vocab 生成 · ${new Date().toLocaleDateString('zh-CN')}</div>`;
+    }
+    function exportPdf() { const selectedWords = words.filter(word => selected.has(word.id)); if (!selectedWords.length) { alert('目前没有已选中的词，请先勾选一些单词。'); return; } buildPdfSheet(selectedWords); document.title = 'Halo Vocab-已选词表'; document.body.classList.add('print-mode'); window.setTimeout(() => window.print(), 100); }
+    window.addEventListener('afterprint', () => { document.body.classList.remove('print-mode'); document.title = 'Halo Vocab · 词表选择器'; });
+    document.querySelector('#select-all').addEventListener('click', () => setAll(true));
+    document.querySelector('#select-none').addEventListener('click', () => setAll(false));
+    document.querySelector('#invert-selection').addEventListener('click', () => { words.forEach(word => selected.has(word.id) ? selected.delete(word.id) : selected.add(word.id)); saveSelection(); render(); });
+    document.querySelector('#export-pdf').addEventListener('click', exportPdf);
+    render();
+  </script>
+</body>
+</html>
