@@ -67,3 +67,8 @@ git push origin v0.1.0
 ```
 
 未配置 Apple Developer 签名证书时，macOS 首次打开可能需要在“系统设置 → 隐私与安全性”中允许打开；这不影响生成和使用安装包。
+
+## 公开下载
+
+- Windows 安装包：[Halo Vocab Setup](https://github.com/Hellpunk113/halo-vocab/raw/refs/heads/main/release/Halo-Vocab-0.1.0-Setup.exe)
+- macOS 通用 DMG：请从 [GitHub Actions 构建产物](https://github.com/Hellpunk113/halo-vocab/actions/runs/35564270601/artifacts/10623475849) 下载。
